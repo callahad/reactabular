@@ -91,7 +91,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    propTypes: {
 	        columnNames: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.func]),
-	        data: React.PropTypes.array,
+	        data: React.PropTypes.oneOfType([React.PropTypes.array, function (props, propName) {
+	            try {
+	                var iterable = Symbol && typeof props[propName][Symbol.iterator] === 'function';
+	                if (!iterable) {
+	                    throw new Error(propName + 'is not iterable');
+	                }
+	            } catch (e) {
+	                return e;
+	            }
+	        }]),
 	        columns: React.PropTypes.array,
 	        row: React.PropTypes.func,
 	        children: React.PropTypes.object,
@@ -134,10 +143,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                data.map(function (row, i) {
 	                    return React.createElement(
 	                        'tr',
-	                        _extends({ key: (row[rowKey] || i) + '-row' }, rowProps(row, i)),
+	                        _extends({ key: (row[rowKey] || row.get && row.get(rowKey) || i) + '-row' }, rowProps(row, i)),
 	                        columns.map(function (column, j) {
 	                            var property = column.property;
-	                            var value = row[property];
+	                            var value = row[property] || row.get && row.get(property);
 	                            var cell = column.cell || [id];
 	                            var content;
 	
