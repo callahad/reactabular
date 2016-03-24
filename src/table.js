@@ -52,10 +52,10 @@ module.exports = React.createClass({
             <table {...props}>
                 {isFunction(columnNames) ? columnNames(columns) : <thead><ColumnNames config={columnNames} columns={columns} /></thead>}
                 <tbody>
-                    {data.map((row, i) => <tr key={(row[rowKey] || i) + '-row'} {...rowProps(row, i)}>{
+                    {data.map((row, i) => <tr key={(row[rowKey] || (row.get && row.get(rowKey)) || i) + '-row'} {...rowProps(row, i)}>{
                         columns.map((column, j) => {
                             var property = column.property;
-                            var value = row[property];
+                            var value = row[property] || (row.get && row.get(property));
                             var cell = column.cell || [id];
                             var content;
 
