@@ -18,7 +18,17 @@ module.exports = React.createClass({
             React.PropTypes.object,
             React.PropTypes.func
         ]),
-        data: React.PropTypes.array,
+        data: React.PropTypes.oneOfType([
+            React.PropTypes.array,
+            (props, propName) => {
+                try {
+                    let iterable = Symbol && typeof props[propName][Symbol.iterator] === 'function';
+                    if (!iterable) { throw new Error(propName + 'is not iterable'); }
+                } catch (e) {
+                    return e;
+                }
+            }
+        ]),
         columns: React.PropTypes.array,
         row: React.PropTypes.func,
         children: React.PropTypes.object,
